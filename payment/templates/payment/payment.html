@@ -1,0 +1,40 @@
+{% extends 'payment/base.html' %}
+
+
+{% block content %}
+<div class="container">
+  <section>
+      <div class="product">
+        <div class="description">
+          <h3>{{ product.name }}</h3>
+          <p>{{ product.description }}</p>
+          <h5>{{ product.price }}₽</h5>
+        </div>
+      </div>
+      <button type="button" id="buy-button">buy</button>
+    {% csrf_token %}
+  </section>
+</div>
+
+<script type="text/javascript">
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  const stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}");
+
+  const checkoutButton = document.getElementById("buy-button");
+  checkoutButton.addEventListener("click", getSessionToRedirect)
+
+  async function getSessionToRedirect() {
+      const response = await fetch("{% url 'buy' product.id %}", {
+        method: "POST",
+        headers: {
+            'X-CSRFToken': csrftoken
+        }
+      })
+      const session = await response.json()
+      const result =  stripe.redirectToCheckout({ sessionId: session.id });
+      if (result.error) {
+        alert(result.error.message)
+      }
+  }
+</script>
+{% endblock %}
