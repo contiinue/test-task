@@ -4,7 +4,7 @@ from django.views.generic import DetailView, TemplateView
 
 from test_task.settings import STRIPE_PUBLIC_KEY
 from .models import Item, Order
-from .get_request_to_payment import get_stripe_session, get_data_for_m2m_model
+from .get_request_to_payment import get_stripe_session, create_payment, get_data_for_m2m_model
 
 
 class Success(TemplateView):
@@ -17,9 +17,15 @@ class Cancel(TemplateView):
     template_name = 'payment/cancel.html'
 
 
+class CreatePayment(View):
+    def post(self, request, pk):
+        return JsonResponse(
+            {'clientSecret': create_payment(pk, request.GET.get('order', False))['client_secret']}
+        )
+
+
 class CreateSession(View):
     """ Getting a page for paying for an item"""
-
     def post(self, request, pk):
         return JsonResponse({
             'id': get_stripe_session(pk, request.build_absolute_uri(''), request.GET.get('order', False)).id
