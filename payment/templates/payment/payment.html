@@ -6,9 +6,19 @@
   <section>
       <div class="product">
         <div class="description">
-          <h3>{{ product.name }}</h3>
-          <p>{{ product.description }}</p>
-          <h5>{{ product.price }}₽</h5>
+          {% if product %}
+            <h3>item: {{ product.name }}</h3>
+            <p>description: {{ product.description }}</p>
+            {% if product.discount.discount %}
+              <h5>price:{{ product.get_discount }} {{ product.currency }} 
+                <strong>discount: {{ product.discount.discount }}%</strong> old price: <s>{{ product.price }} </s></h5>
+            {% else %}
+              <h5>price:{{ product.price }} {{ product.currency }}</h5>
+            {% endif %}
+          {% elif order %}
+          <h3>items: {{ order.name }}</h3>
+          <h5>price order: {{ order.price }} {{ order.currency }}</h5>
+          {% endif %}
         </div>
       </div>
       <button type="button" id="buy-button">buy</button>
@@ -24,7 +34,7 @@
   checkoutButton.addEventListener("click", getSessionToRedirect)
 
   async function getSessionToRedirect() {
-      const response = await fetch("{% url 'buy' product.id %}", {
+      const response = await fetch("{% if product %} {% url 'buy' product.id %} {% else%} {% url 'buy' order.id %}?order=true {% endif %}", {
         method: "POST",
         headers: {
             'X-CSRFToken': csrftoken

@@ -3,8 +3,8 @@ from django.views import View
 from django.views.generic import DetailView, TemplateView
 
 from test_task.settings import STRIPE_PUBLIC_KEY
-from .models import Item
-from .get_request_to_payment import get_stripe_session
+from .models import Item, Order
+from .get_request_to_payment import get_stripe_session, get_data_for_m2m_model
 
 
 class Success(TemplateView):
@@ -22,7 +22,7 @@ class CreateSession(View):
 
     def post(self, request, pk):
         return JsonResponse({
-            'id': get_stripe_session(pk, request.build_absolute_uri('')).id
+            'id': get_stripe_session(pk, request.build_absolute_uri(''), request.GET.get('order', False)).id
         })
 
 
@@ -35,4 +35,17 @@ class ItemView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ItemView, self).get_context_data(**kwargs)
         context['STRIPE_PUBLIC_KEY'] = STRIPE_PUBLIC_KEY
+        return context
+
+
+class OrderView(DetailView):
+    template_name = 'payment/payment.html'
+    model = Order
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderView, self).get_context_data(**kwargs)
+        context['STRIPE_PUBLIC_KEY'] = STRIPE_PUBLIC_KEY
+        context['order'] = get_data_for_m2m_model(
+            context['object']
+        )
         return context
