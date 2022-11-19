@@ -1,4 +1,5 @@
-from rest_framework.reverse import reverse_lazy
+from django.urls import reverse_lazy
+
 from test_task.settings import STRIPE_SECRET_KEY
 
 from payment.models import Item, Order
