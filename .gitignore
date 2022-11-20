@@ -2,3 +2,4 @@
 */migrations/*
 /set_env.sh
 /pgdata
+/.env
