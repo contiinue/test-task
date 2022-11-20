@@ -27,7 +27,7 @@ DJANGO_SUPERUSER_EMAIL=root@root.com
 DJANGO_SUPERUSER_USERNAME=root
 
 # Django
-DJANGO_SECRET_KEY='django-insecure-!p5$we7-8iv-$lw)@+^a4ply0re6f^(j+r!kl&0yo1u3#8%pvq'
+DJANGO_SECRET_KEY='some_secret_key'
 
 # Stripe
 STRIPE_PUBLIC_KEY=
