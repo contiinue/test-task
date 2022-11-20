@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
@@ -28,14 +29,10 @@ class Order(models.Model):
 
 class Discount(models.Model):
     """ Model for sale """
-    discounts = (
-        ('10%', 10),
-        ('25%', 25),
-        ('50%', 50),
-        ('75%', 75),
-        ('90%', 90),
-    )
-    discount = models.IntegerField(choices=discounts)
+    discount = models.IntegerField(validators=[
+        MaxValueValidator(100),
+        MinValueValidator(1)
+    ])
 
     def __str__(self):
         return f'{self.discount}%'
